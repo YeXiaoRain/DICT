@@ -47,6 +47,7 @@ BOLD = "\033[1m";
 UNDERLINE = "\033[4m";
 NORMAL = "\033[m";
 RED = "\033[1;31m"
+BLUE = "\033[1;34m"
 HCZCOLOR = "\033[1;33m"
 def crawl_xml(queryword):
 	return urllib2.urlopen("http://dict.yodao.com/search?keyfrom=dict.python&q="
@@ -109,18 +110,10 @@ def query(word):
 def liststr(str):
 	return " ".join(str)
 
-def main(argv):
-	if len(argv) <= 0:
-		usage();
-		#debug();
-		sys.exit(1);
-	xml = crawl_xml(" ".join(argv));	
-	print_translations(xml, True, False);
-
-if __name__ == "__main__":
-	main(sys.argv[1:]);
-	print "--hcz's translation--"
-	arg = liststr(sys.argv[1:])
+def hcz_tran(argv):
+	print 
+	print BLUE + "Translator write by hcz:" + DEFAULT
+	arg = liststr(argv)
 	data = query(urllib.quote_plus(arg))
 	qdata = json.loads(data)
 
@@ -132,9 +125,20 @@ if __name__ == "__main__":
 
 	if qdata.has_key("basic"):
 		if qdata["basic"].has_key("phonetic"):
-			print qdata["basic"]["phonetic"]
-		print liststr(qdata["basic"]["explains"])
+			print "/"+qdata["basic"]["phonetic"]+"/"
+		print HCZCOLOR +liststr(qdata["basic"]["explains"])+ DEFAULT
 
 	if qdata.has_key("web"):
-		print '--web--'
+		print BLUE + 'From web:'+ DEFAULT
 		for i in qdata["web"]: print i["key"], HCZCOLOR +liststr(i["value"])+ DEFAULT
+
+def main(argv):
+	if len(argv) <= 0:
+		usage();
+		#debug();
+		sys.exit(1);
+	xml = crawl_xml(" ".join(argv));	
+	print_translations(xml, True, False);
+	hcz_tran(argv)
+if __name__ == "__main__":
+	main(sys.argv[1:]);
