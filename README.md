@@ -5,20 +5,31 @@ DICT
 
 - 下载 dict.py 到电脑里
 
->curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py > yourpath/dict.py
+```Bash
+curl -o dict.py https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py 
+```
 
 - 编辑 ~/.bashrc
 
->sudo vim ~/.bashrc`
+```Bash
+sudo vim ~/.bashrc
+```
 
 - 在末尾加上
 
->alias youdao='python yourpath/dict.py'
+```Bash
+alias youdao='python yourpath/dict.py'
+```
 
 - 使用：
 
->youdao word or sentence
+```Bash
+youdao word or sentence
+```
 
 - 也可以直接使用：
 
->curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py | python - word or sentence
+```Bash
+curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py | python - word or sentence
+```
+
