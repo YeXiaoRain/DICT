@@ -4,11 +4,16 @@ import urllib;
 import urllib2;
 import sys;
 import json
-def debug():
-	xml = open("word.xml").read();
-	print get_text(xml);
-	print get_elements_by_path(xml, "custom-translation/content");
-	#print_translations(xml, False, False);
+
+GREEN = "\033[1;32m";
+DEFAULT = "\033[0;49m";
+BOLD = "\033[1m";
+UNDERLINE = "\033[4m";
+NORMAL = "\033[m";
+RED = "\033[1;31m"
+BLUE = "\033[1;34m"
+HCZCOLOR = "\033[1;33m"
+
 def get_elements_by_path(xml, elem):
 	if type(xml) == type(''):
 		xml = [xml];
@@ -28,8 +33,8 @@ def get_elements_by_path(xml, elem):
 		for item in xml:
 			subitems += get_elements(item, elem[0]);
 		return get_elements_by_path(subitems, elem[1:]);
-textre = re.compile("\!\[CDATA\[(.*?)\]\]", re.DOTALL);
 def get_text(xml):
+	textre = re.compile("\!\[CDATA\[(.*?)\]\]", re.DOTALL);
 	match = re.search(textre, xml);
 	if not match:
 		return xml;
@@ -41,21 +46,14 @@ def get_elements(xml, elem):
 	for m in it:
 		result.append(m.group(1));
 	return result;
-GREEN = "\033[1;32m";
-DEFAULT = "\033[0;49m";
-BOLD = "\033[1m";
-UNDERLINE = "\033[4m";
-NORMAL = "\033[m";
-RED = "\033[1;31m"
-BLUE = "\033[1;34m"
-HCZCOLOR = "\033[1;33m"
-def crawl_xml(queryword):
-	return urllib2.urlopen("http://dict.yodao.com/search?keyfrom=dict.python&q="
-        + urllib.quote_plus(queryword) + "&xmlDetail=true&doctype=xml").read();
-def print_translations(xml, with_color, detailed):
+def yodao_trans(argv):
+	xml = urllib2.urlopen("http://dict.yodao.com/search?keyfrom=dict.python&q="
+		+ urllib.quote_plus(" ".join(argv)) 
+		+ "&xmlDetail=true&doctype=xml").read();
         #print xml;
 	original_query = get_elements(xml, "original-query");
 	queryword = get_text(original_query[0]);
+	
 	custom_translations = get_elements(xml, "custom-translation");
 	print BOLD + UNDERLINE + queryword + NORMAL;
 	translated = False;
@@ -65,12 +63,8 @@ def print_translations(xml, with_color, detailed):
 		
 		print RED + "Translations from " + source[0] + DEFAULT;
 		contents = get_elements_by_path(cus, "translation/content");
-		if with_color:
-			for content in contents[0:5]:
-				print GREEN + get_text(content) + DEFAULT;
-		else:
-			for content in contents[0:5]:
-				print get_text(content);
+		for content in contents[0:5]:
+			print GREEN + get_text(content) + DEFAULT;
 		translated = True;
 
 	yodao_translations = get_elements(xml, "yodao-web-dict");
@@ -86,35 +80,14 @@ def print_translations(xml, with_color, detailed):
 			summaries = get_elements_by_path(web, "trans/summary");
 			key = keys[0].strip();
 			value = values[0].strip();
-			#summary = summaries[0].strip();
-                        #lines = get_elements(summary, "line");
-		        if with_color:
-			       	print BOLD +  get_text(key) + ":\t" +DEFAULT + GREEN + get_text(value) + NORMAL;
-                                #for line in lines:
-                                #        print GREEN + get_text(line) + DEFAULT;
-				#print get_text(summary) + DEFAULT;
-		        else:
-				print get_text(value);
-				#print get_text(summary);
-		        #translated = True;
-		        #if not detailed:
-			#        break
-	
-def usage():
-	print "usage: dict.py word_to_translate";
-
-def query(word):
-	url = 'http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&q=' + word
-	return urllib.urlopen(url).read()
+			print BOLD +  get_text(key) + ":\t" +DEFAULT + GREEN + get_text(value) + NORMAL;
 
 def liststr(str):
 	return " ".join(str)
 
-def hcz_tran(argv):
-	print 
-	print BLUE + "Translator write by hcz:" + DEFAULT
+def hcz_trans(argv):
 	arg = liststr(argv)
-	data = query(urllib.quote_plus(arg))
+	data = urllib.urlopen('http://fanyi.youdao.com/openapi.do?keyfrom=tinxing&key=1312427901&type=data&doctype=json&version=1.1&q=' + urllib.quote_plus(arg)).read();
 	qdata = json.loads(data)
 
 	if qdata["errorCode"] != 0:
@@ -124,21 +97,22 @@ def hcz_tran(argv):
 	print  qdata["query"], "-", HCZCOLOR +liststr(qdata["translation"])+ DEFAULT
 
 	if qdata.has_key("basic"):
+		print BLUE + "Youdao:" + DEFAULT
 		if qdata["basic"].has_key("phonetic"):
 			print "/"+qdata["basic"]["phonetic"]+"/"
 		print HCZCOLOR +liststr(qdata["basic"]["explains"])+ DEFAULT
 
 	if qdata.has_key("web"):
 		print BLUE + 'From web:'+ DEFAULT
-		for i in qdata["web"]: print i["key"], HCZCOLOR +liststr(i["value"])+ DEFAULT
+		for i in qdata["web"]: 
+			print i["key"], HCZCOLOR +liststr(i["value"])+ DEFAULT
 
 def main(argv):
 	if len(argv) <= 0:
-		usage();
-		#debug();
+		print "usage: dict.py word_to_translate";
 		sys.exit(1);
-	xml = crawl_xml(" ".join(argv));	
-	print_translations(xml, True, False);
-	hcz_tran(argv)
+	hcz_trans(argv)
+	print 
+	yodao_trans(argv);
 if __name__ == "__main__":
 	main(sys.argv[1:]);
