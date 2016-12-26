@@ -1,0 +1,22 @@
+{
+  "name": "BingDict",
+  "version": "1.0.0",
+  "description": "",
+  "main": "cli.js",
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "scripts": {
+    "start": "node bingDict test"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": "^0.22.0",
+    "colors": "^1.1.2",
+    "got": "^6.5.0",
+    "lodash": "^4.17.3",
+    "moment": "^2.15.1",
+    "yargs": "^6.0.0"
+  }
+}

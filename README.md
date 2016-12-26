@@ -33,3 +33,13 @@ youdao word or sentence
 curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py | python - word or sentence
 ```
 
+
+- 其它翻译项目(nodejs):
+
+|repo|source|comment|modified|
+|---|---|---|---|
+|[command-line-tool/dictionary](https://github.com/command-line-tool/dictionary)|youdaoapi|不支持句子|[youdaodict](/YeXiaoRain/DICT/tree/master/youdaodict)|
+|[syaning/dict-en-zh](https://github.com/syaning/dict-en-zh)|youdao网页/shanbayapi||-|
+|[Toybreak/cliDict](https://github.com/Toybreak/cliDict)|bing|没有中->英 不支持句子|[bingdict](/YeXiaoRain/DICT/tree/master/bingdict)|
+|[justinleoye/tuzki-dict](https://github.com/justinleoye/tuzki-dict)||chrome插件|-|
+
