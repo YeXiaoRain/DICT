@@ -39,7 +39,7 @@ curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py | pytho
 |repo|source|comment|modified|
 |---|---|---|---|
 |[command-line-tool/dictionary](https://github.com/command-line-tool/dictionary)|youdaoapi|不支持句子|[youdaodict](/youdaodict)|
-|[syaning/dict-en-zh](https://github.com/syaning/dict-en-zh)|youdao网页/shanbayapi||-|
+|[syaning/dict-en-zh](https://github.com/syaning/dict-en-zh)|youdao网页/shanbayapi|shanbay源比较垃圾|-|
 |[Toybreak/cliDict](https://github.com/Toybreak/cliDict)|bing|没有中->英 不支持句子|[bingdict](/bingdict)|
 |[justinleoye/tuzki-dict](https://github.com/justinleoye/tuzki-dict)||chrome插件|-|
 
