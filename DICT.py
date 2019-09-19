@@ -1,15 +1,17 @@
 #!/usr/bin/env python
-import re;
-import urllib;
-import urllib2;
-import sys;
+#coding=utf-8
+
+import re
+import urllib
+import urllib2
+import sys
 import json
 
-GREEN = "\033[1;32m";
-DEFAULT = "\033[0;49m";
-BOLD = "\033[1m";
-UNDERLINE = "\033[4m";
-NORMAL = "\033[m";
+GREEN = "\033[1;32m"
+DEFAULT = "\033[0;49m"
+BOLD = "\033[1m"
+UNDERLINE = "\033[4m"
+NORMAL = "\033[m"
 RED = "\033[1;31m"
 BLUE = "\033[1;34m"
 YELLOW = "\033[1;33m"
