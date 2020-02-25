@@ -6,7 +6,7 @@ DICT
 - 下载 dict.py 到电脑里
 
 ```Bash
-curl -o dict.py https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py 
+curl -o dict.py https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py 
 ```
 
 - 编辑 ~/.bashrc
@@ -18,7 +18,7 @@ sudo vim ~/.bashrc
 - 在末尾加上
 
 ```Bash
-alias youdao='python yourpath/dict.py'
+alias youdao='python3 <yourpath>/dict.py'
 ```
 
 - 使用：
@@ -30,16 +30,16 @@ youdao word or sentence
 - 也可以直接使用：
 
 ```Bash
-curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/master/DICT.py | python - word or sentence
+curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py | python3 - word or sentence
 ```
 
 
-- 其它翻译项目(nodejs):
+- 其它翻译项目(如nodejs分支):
 
 |repo|source|comment|modified|
 |---|---|---|---|
-|[command-line-tool/dictionary](https://github.com/command-line-tool/dictionary)|youdaoapi|不支持句子|[youdaodict](/youdaodict)|
+|[command-line-tool/dictionary](https://github.com/command-line-tool/dictionary)|youdaoapi|不支持句子|youdaodict|
 |[syaning/dict-en-zh](https://github.com/syaning/dict-en-zh)|youdao网页/shanbayapi|shanbay源比较垃圾|-|
-|[Toybreak/cliDict](https://github.com/Toybreak/cliDict)|bing|没有中->英 不支持句子|[bingdict](/bingdict)|
+|[Toybreak/cliDict](https://github.com/Toybreak/cliDict)|bing|没有中->英 不支持句子|bingdict|
 |[justinleoye/tuzki-dict](https://github.com/justinleoye/tuzki-dict)||chrome插件|-|
 
