@@ -1,7 +1,7 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 import re;
 import urllib;
-import urllib2;
+import urllib.request;
 import sys;
 import json
 
@@ -49,23 +49,23 @@ class yodaodict():
             result.append(m.group(1))
         return result
     def trans(self,argv):
-        xml = urllib2.urlopen("http://dict.yodao.com/search?keyfrom=dict.python&q="
-                + urllib.quote_plus(" ".join(argv)) 
-                + "&xmlDetail=true&doctype=xml").read()
-        #print xml
+        xml = urllib.request.urlopen("http://dict.yodao.com/search?keyfrom=dict.python&q="
+                + urllib.parse.quote_plus(" ".join(argv))
+                + "&xmlDetail=true&doctype=xml").read().decode('utf-8')
+        #print(xml)
         original_query = self.get_elements(xml, "original-query")
         queryword = self.get_text(original_query[0])
 
         custom_translations = self.get_elements(xml, "custom-translation")
-        print BOLD + UNDERLINE + queryword + NORMAL
+        print(BOLD + UNDERLINE + queryword + NORMAL)
         translated = False
 
         for cus in custom_translations:
             source = self.get_elements_by_path(cus, "source/name")
-            print RED + "Translations from " + source[0] + DEFAULT
+            print(RED + "Translations from " + source[0] + DEFAULT)
             contents = self.get_elements_by_path(cus, "translation/content")
             for content in contents[0:5]:
-                print GREEN + self.get_text(content) + DEFAULT
+                print(GREEN + self.get_text(content) + DEFAULT)
             translated = True
 
         yodao_translations = self.get_elements(xml, "yodao-web-dict")
@@ -74,14 +74,14 @@ class yodaodict():
             webtrans = self.get_elements(trans, "web-translation")
             for web in webtrans[0:5]:
                 if not printed:
-                    print RED + "Translations from yodao:" + DEFAULT
+                    print( RED + "Translations from yodao:" + DEFAULT)
                     printed = True
                 keys = self.get_elements(web, "key")
                 values = self.get_elements_by_path(web, "trans/value")
                 summaries = self.get_elements_by_path(web, "trans/summary")
                 key = keys[0].strip()
                 value = values[0].strip()
-                print BOLD +  self.get_text(key) + ":\t" +DEFAULT + GREEN + self.get_text(value) + NORMAL
+                print(BOLD +  self.get_text(key) + ":\t" +DEFAULT + GREEN + self.get_text(value) + NORMAL)
 #----------------------------------------------------------------------------------------#
 
 class youdaodict:
@@ -91,34 +91,34 @@ class youdaodict:
         return " ".join(string)
     def trans(self,argv):
         arg = self.liststr(argv)
-        data = urllib.urlopen(self.url + urllib.quote_plus(arg)).read()
+        data = urllib.request.urlopen(self.url + urllib.parse.quote_plus(arg)).read()
         qdata = json.loads(data)
 
         if qdata["errorCode"] != 0:
-            print "error:", qdata["errorCode"]
-            print data
+            print("error:", qdata["errorCode"])
+            print(data)
+        print(qdata["query"],'-', YELLOW + self.liststr(qdata["translation"])+ DEFAULT)
 
-        print  qdata["query"], "-", YELLOW + self.liststr(qdata["translation"])+ DEFAULT
+        if "basic" in qdata:
+            print(BLUE + "Youdao:" + DEFAULT)
+            if "phonetic" in qdata["basic"]:
+                print("/"+qdata["basic"]["phonetic"]+"/")
+            print(YELLOW + self.liststr(qdata["basic"]["explains"])+ DEFAULT)
 
-        if qdata.has_key("basic"):
-            print BLUE + "Youdao:" + DEFAULT
-            if qdata["basic"].has_key("phonetic"):
-                print "/"+qdata["basic"]["phonetic"]+"/"
-            print YELLOW + self.liststr(qdata["basic"]["explains"])+ DEFAULT
-
-        if qdata.has_key("web"):
-            print BLUE + 'From web:'+ DEFAULT
-            for i in qdata["web"]: 
-                print i["key"], YELLOW + self.liststr(i["value"])+ DEFAULT
+        if "web" in qdata:
+            print(BLUE + 'From web:'+ DEFAULT)
+            for i in qdata["web"]:
+                print(i["key"], YELLOW + self.liststr(i["value"])+ DEFAULT)
 
 #----------------------------------------------------------------------------------------#
 def main(argv):
+    # print(sys.version)
     if len(argv) <= 0:
-        print "usage: %s word_to_translate"%(sys.argv[0])
+        print("usage: %s word_to_translate"%(sys.argv[0]))
         sys.exit(1);
     youdaod = youdaodict()
     youdaod.trans(argv)
-    print
+    print()
     yodao   = yodaodict()
     yodao.trans(argv)
 if __name__ == "__main__":
