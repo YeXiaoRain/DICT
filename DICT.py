@@ -4,6 +4,10 @@ import urllib;
 import urllib.request;
 import sys;
 import json
+import logging
+
+logger = logging.getLogger()
+logger.setLevel(logging.DEBUG)
 
 GREEN = "\033[1;32m";
 DEFAULT = "\033[0;49m";
@@ -116,10 +120,18 @@ def main(argv):
     if len(argv) <= 0:
         print("usage: %s word_to_translate"%(sys.argv[0]))
         sys.exit(1);
-    youdaod = youdaodict()
-    youdaod.trans(argv)
-    print()
-    yodao   = yodaodict()
-    yodao.trans(argv)
+    try:
+        youdaod = youdaodict()
+        youdaod.trans(argv)
+        print()
+    except Exception as e:
+        logger.error(str(e), exc_info=True)
+
+    try:
+        yodao   = yodaodict()
+        yodao.trans(argv)
+    except Exception as e:
+        logger.error(str(e), exc_info=True)
+
 if __name__ == "__main__":
     main(sys.argv[1:])
