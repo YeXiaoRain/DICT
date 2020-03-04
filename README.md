@@ -18,14 +18,19 @@ sudo vim ~/.bashrc
 - 在末尾加上
 
 ```Bash
-alias youdao='python3 <yourpath>/dict.py'
+alias y='python3 <yourpath>/DICT.py'
 ```
 
 - 使用：
 
 ```Bash
-youdao word or sentence
+y word or sentence
 ```
+
+- 也可以直接执行脚本进行交互式翻译：
+
+`y`
+
 
 - 也可以直接使用：
 
@@ -33,8 +38,15 @@ youdao word or sentence
 curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py | python3 - word or sentence
 ```
 
+# 启用OpenapiYoudao
 
-- 其它翻译项目(如nodejs分支):
+去`https://ai.youdao.com/`创建应用
+
+复制`_config.ini`为`config.ini`并配置你的`APP_ID`和`APP_SECRET`
+
+如果没有配置则不会调用`OpenapiYoudao`
+
+# 其它翻译项目(如nodejs分支):
 
 |repo|source|comment|modified|
 |---|---|---|---|

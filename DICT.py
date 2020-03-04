@@ -1,10 +1,17 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import re
+import os
 import urllib
 import urllib.request
-import sys
-import json
 import logging
+import sys
+import uuid
+import requests
+import hashlib
+import time
+import json
+import configparser
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -56,10 +63,10 @@ class yodaodict:
             result.append(m.group(1))
         return result
 
-    def trans(self, argv):
-        xml = urllib.request.urlopen("http://dict.yodao.com/search?keyfrom=dict.python&q="
-                                     + urllib.parse.quote_plus(" ".join(argv))
-                                     + "&xmlDetail=true&doctype=xml").read().decode('utf-8')
+    def trans(self, arg):
+        xml = urllib.request.urlopen(
+            "http://dict.yodao.com/search?keyfrom=dict.python&q="
+            + urllib.parse.quote_plus(arg) + "&xmlDetail=true&doctype=xml").read().decode('utf-8')
         # print(xml)
         original_query = self.get_elements(xml, "original-query")
         queryword = self.get_text(original_query[0])
@@ -89,8 +96,8 @@ class yodaodict:
                 value = values[0].strip()
                 print(BOLD + self.get_text(key) + ":\t" + DEFAULT + GREEN + self.get_text(value) + NORMAL)
 
+        # ----------------------------------------------------------------------------------------#
 
-# ----------------------------------------------------------------------------------------#
 
 class youdaodict:
     def __init__(self):
@@ -100,9 +107,7 @@ class youdaodict:
     def list_str(string):
         return " ".join(string)
 
-    def trans(self, argv):
-        arg = self.list_str(argv)
-        print(self.url + urllib.parse.quote_plus(arg))
+    def trans(self, arg):
         data = urllib.request.urlopen(self.url + urllib.parse.quote_plus(arg)).read()
         qdata = json.loads(data)
 
@@ -124,23 +129,104 @@ class youdaodict:
 
 
 # ----------------------------------------------------------------------------------------#
-def main(argv):
-    # print(sys.version)
-    if len(argv) <= 0:
-        print("usage: %s word_to_translate" % (sys.argv[0]))
-        sys.exit(1)
+# https://ai.youdao.com/DOCSIRMA/html/%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E7%BF%BB%E8%AF%91/API%E6%96%87%E6%A1%A3/%E6%96%87%E6%9C%AC%E7%BF%BB%E8%AF%91%E6%9C%8D%E5%8A%A1/%E6%96%87%E6%9C%AC%E7%BF%BB%E8%AF%91%E6%9C%8D%E5%8A%A1-API%E6%96%87%E6%A1%A3.html
+
+
+class OpenapiYoudao:
+    YOUDAO_URL = 'https://openapi.youdao.com/api'
+
+    def __init__(self, app_key, app_secret):
+        self.app_key = app_key
+        self.app_secret = app_secret
+
+    @staticmethod
+    def encrypt(signStr):
+        hash_algorithm = hashlib.sha256()
+        hash_algorithm.update(signStr.encode('utf-8'))
+        return hash_algorithm.hexdigest()
+
+    @staticmethod
+    def truncate(q):
+        if q is None:
+            return None
+        size = len(q)
+        return q if size <= 20 else q[0:10] + str(size) + q[size - 10:size]
+
+    @staticmethod
+    def do_request(data):
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
+        return requests.post(OpenapiYoudao.YOUDAO_URL, data=data, headers=headers)
+
+    def trans(self, q):
+        # q = "test a sentences"
+        if self.app_key is None or self.app_key == '' or self.app_secret is None or self.app_secret == '':
+            return
+
+        data = {}
+        data['from'] = 'auto'
+        data['to'] = 'auto'
+        data['signType'] = 'v3'
+        curtime = str(int(time.time()))
+        data['curtime'] = curtime
+        salt = str(uuid.uuid1())
+        signStr = self.app_key + self.truncate(q) + salt + curtime + self.app_secret
+        sign = self.encrypt(signStr)
+        data['appKey'] = self.app_key
+        data['q'] = q
+        data['salt'] = salt
+        data['sign'] = sign
+
+        response = self.do_request(data)
+        contentType = response.headers['Content-Type']
+        # print(response.content)
+        res = json.loads(response.content)
+        if res['errorCode'] == '0':
+            print(f"OpenapiYoudao:{GREEN}{res['translation']}{DEFAULT}")
+        else:
+            print(f"error code:{RED}{res['errorCode']}{DEFAULT}")
+
+
+# ----------------------------------------------------------------------------------------#
+
+def trans(word_or_sentences):
     try:
         youdaod = youdaodict()
-        youdaod.trans(argv)
+        youdaod.trans(word_or_sentences)
         print()
     except Exception as e:
         logger.error(str(e), exc_info=True)
 
     try:
         yodao = yodaodict()
-        yodao.trans(argv)
+        yodao.trans(word_or_sentences)
+        print()
     except Exception as e:
         logger.error(str(e), exc_info=True)
+
+    try:
+        if os.path.exists('config.ini'):
+            config = configparser.ConfigParser()
+            config.read("config.ini")
+            app_key = config.get("openapi_youdao", "APP_KEY")
+            app_secret = config.get("openapi_youdao", "APP_SECRET")
+            openapiYoudao = OpenapiYoudao(app_key, app_secret)
+            openapiYoudao.trans(word_or_sentences)
+    except Exception as e:
+        logger.error(str(e), exc_info=True)
+
+
+# ----------------------------------------------------------------------------------------#
+def main(argv):
+    # print(sys.version)
+    if len(argv) <= 0:
+        # print("usage: %s word_or_sentences_to_translate" % (sys.argv[0]))
+        print("please enter word or sentences (press CTRL-C to exit)>")
+        while True:
+            instr = input()
+            trans(instr)
+        # sys.exit(1)
+    else:
+        trans(" ".join(argv))
 
 
 if __name__ == "__main__":
