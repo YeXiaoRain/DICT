@@ -11,6 +11,7 @@ import time
 import urllib
 import urllib.request
 import uuid
+import threading
 
 import requests
 
@@ -110,26 +111,28 @@ class youdaodict:
         return " ".join(string)
 
     def trans(self, arg):
+        result = []
         data = urllib.request.urlopen(
             self.url + urllib.parse.quote_plus(arg)).read()
         qdata = json.loads(data)
 
         if qdata["errorCode"] != 0:
-            print("error:", qdata["errorCode"])
-            print(data)
-        print(qdata["query"], '-', YELLOW +
-              self.list_str(qdata["translation"]) + DEFAULT)
+            result.append(f'error:{qdata["errorCode"]}')
+            result.append(f'{data}')
+        result.append(f'{qdata["query"]} - {YELLOW}{self.list_str(qdata["translation"])}{DEFAULT}')
 
         if "basic" in qdata:
-            print(BLUE + "Youdao:" + DEFAULT)
+            result.append(f'{BLUE}Youdao:{DEFAULT}')
             if "phonetic" in qdata["basic"]:
-                print("/" + qdata["basic"]["phonetic"] + "/")
-            print(YELLOW + self.list_str(qdata["basic"]["explains"]) + DEFAULT)
+                result.append(f'/{qdata["basic"]["phonetic"]}/')
+            result.append(f'{YELLOW}{self.list_str(qdata["basic"]["explains"])}{DEFAULT}')
 
         if "web" in qdata:
-            print(BLUE + 'From web:' + DEFAULT)
+            result.append(f'{BLUE}From web:{DEFAULT}')
             for i in qdata["web"]:
-                print(i["key"], YELLOW + self.list_str(i["value"]) + DEFAULT)
+                result.append(f'{i["key"]} {YELLOW}{self.list_str(i["value"])}{DEFAULT}')
+
+        return result
 
 
 # ----------------------------------------------------------------------------------------#
@@ -192,14 +195,16 @@ class OpenapiYoudao:
 
 # ----------------------------------------------------------------------------------------#
 
-def trans(word_or_sentences):
+def youdaodMain(word_or_sentences):
     try:
         youdaod = youdaodict()
-        youdaod.trans(word_or_sentences)
-        print()
+        result = youdaod.trans(word_or_sentences)
+        for s in result:
+            print(s)
     except Exception as e:
         logger.error(str(e), exc_info=True)
 
+def yodaoMain(word_or_sentences):
     try:
         yodao = yodaodict()
         yodao.trans(word_or_sentences)
@@ -207,6 +212,7 @@ def trans(word_or_sentences):
     except Exception as e:
         logger.error(str(e), exc_info=True)
 
+def openapiYoudaoMain(word_or_sentences):
     try:
         if os.path.exists('config.ini'):
             config = configparser.ConfigParser()
@@ -218,6 +224,17 @@ def trans(word_or_sentences):
     except Exception as e:
         logger.error(str(e), exc_info=True)
 
+
+def trans(word_or_sentences):
+    t = []
+    t.append(threading.Thread(target=youdaodMain,args=(word_or_sentences,)))
+    t.append(threading.Thread(target=yodaoMain,args=(word_or_sentences,)))
+    t.append(threading.Thread(target=openapiYoudaoMain,args=(word_or_sentences,)))
+    
+    for i in range(0, len(t)):
+        t[i].start()
+        t[i].join()
+    
 
 # ----------------------------------------------------------------------------------------#
 def main(argv):
