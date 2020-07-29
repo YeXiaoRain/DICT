@@ -1,7 +1,6 @@
-DICT
-====
+# DICT
 
-**怎么安装**
+## 怎么安装
 
 - 下载 dict.py 到电脑里
 
@@ -27,10 +26,9 @@ alias y='python3 <yourpath>/DICT.py'
 y word or sentence
 ```
 
-- 也可以直接执行脚本进行交互式翻译：
+- 也可以直接执行脚本进行交互式翻译(解决 要翻译的内容带有引号或命令行特殊符号的问题)：
 
 `y`
-
 
 - 也可以直接使用：
 
@@ -38,7 +36,7 @@ y word or sentence
 curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py | python3 - word or sentence
 ```
 
-# 启用OpenapiYoudao
+## 启用OpenapiYoudao
 
 去`https://ai.youdao.com/`创建应用
 
@@ -46,7 +44,7 @@ curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py | pyth
 
 如果没有配置则不会调用`OpenapiYoudao`
 
-# 其它翻译项目(如nodejs分支):
+## 其它翻译项目(如nodejs分支)
 
 |repo|source|comment|modified|
 |---|---|---|---|
@@ -54,4 +52,3 @@ curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py | pyth
 |[syaning/dict-en-zh](https://github.com/syaning/dict-en-zh)|youdao网页/shanbayapi|shanbay源比较垃圾|-|
 |[Toybreak/cliDict](https://github.com/Toybreak/cliDict)|bing|没有中->英 不支持句子|bingdict|
 |[justinleoye/tuzki-dict](https://github.com/justinleoye/tuzki-dict)||chrome插件|-|
-
