@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-import re
+import configparser
+import hashlib
+import json
+import logging
 import os
+import re
+import sys
+import time
 import urllib
 import urllib.request
-import logging
-import sys
 import uuid
+
 import requests
-import hashlib
-import time
-import json
-import configparser
 
 logger = logging.getLogger()
 logger.setLevel(logging.DEBUG)
@@ -49,7 +50,7 @@ class yodaodict:
             return self.get_elements_by_path(subitems, elem[1:])
 
     def get_text(self, xml):
-        textre = re.compile("\!\[CDATA\[(.*?)\]\]", re.DOTALL)
+        textre = re.compile(r"\!\[CDATA\[(.*?)\]\]", re.DOTALL)
         match = re.search(textre, xml)
         if not match:
             return xml
@@ -94,7 +95,8 @@ class yodaodict:
                 # summaries = self.get_elements_by_path(web, "trans/summary")
                 key = keys[0].strip()
                 value = values[0].strip()
-                print(BOLD + self.get_text(key) + ":\t" + DEFAULT + GREEN + self.get_text(value) + NORMAL)
+                print(BOLD + self.get_text(key) + ":\t" + DEFAULT +
+                      GREEN + self.get_text(value) + NORMAL)
 
         # ----------------------------------------------------------------------------------------#
 
@@ -108,13 +110,15 @@ class youdaodict:
         return " ".join(string)
 
     def trans(self, arg):
-        data = urllib.request.urlopen(self.url + urllib.parse.quote_plus(arg)).read()
+        data = urllib.request.urlopen(
+            self.url + urllib.parse.quote_plus(arg)).read()
         qdata = json.loads(data)
 
         if qdata["errorCode"] != 0:
             print("error:", qdata["errorCode"])
             print(data)
-        print(qdata["query"], '-', YELLOW + self.list_str(qdata["translation"]) + DEFAULT)
+        print(qdata["query"], '-', YELLOW +
+              self.list_str(qdata["translation"]) + DEFAULT)
 
         if "basic" in qdata:
             print(BLUE + "Youdao:" + DEFAULT)
@@ -169,7 +173,7 @@ class OpenapiYoudao:
         curtime = str(int(time.time()))
         data['curtime'] = curtime
         salt = str(uuid.uuid1())
-        signStr = self.app_key + self.truncate(q) + salt + curtime + self.app_secret
+        signStr = f'{self.app_key}{self.truncate(q)}{salt}{curtime}{self.app_secret}'
         sign = self.encrypt(signStr)
         data['appKey'] = self.app_key
         data['q'] = q
@@ -177,7 +181,7 @@ class OpenapiYoudao:
         data['sign'] = sign
 
         response = self.do_request(data)
-        contentType = response.headers['Content-Type']
+        # contentType = response.headers['Content-Type']
         # print(response.content)
         res = json.loads(response.content)
         if res['errorCode'] == '0':
