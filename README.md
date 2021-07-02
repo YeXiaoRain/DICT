@@ -11,7 +11,7 @@ curl -o dict.py https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.p
 - 编辑 ~/.bashrc
 
 ```Bash
-sudo vim ~/.bashrc
+vim ~/.bashrc
 ```
 
 - 在末尾加上
