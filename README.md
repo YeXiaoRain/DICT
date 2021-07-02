@@ -20,6 +20,8 @@ vim ~/.bashrc
 alias y='python3 <yourpath>/DICT.py'
 ```
 
+保存后执行`source ~/.bashrc`或重新开启终端可用
+
 - 使用：
 
 ```Bash
