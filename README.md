@@ -1,44 +1,27 @@
 # DICT
 
-## 怎么安装
+## Install
 
-- 下载 dict.py 到电脑里
+```bash
+apt install python3 python3-pip git
+git clone https://github.com/YeXiaoRain/DICT.git -b python3
+pip install --user requirememnts.txt
 
-```Bash
-curl -o dict.py https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py 
+# edit ~/.bashrc
+alias y='python3 <your path>/DICT.py'
+# or
+alias g='python3 <your path>/googletranslator.py'
 ```
 
-- 编辑 ~/.bashrc
+## Usage
 
-```Bash
-vim ~/.bashrc
-```
-
-- 在末尾加上
-
-```Bash
-alias y='python3 <yourpath>/DICT.py'
-```
-
-保存后执行`source ~/.bashrc`或重新开启终端可用
-
-- 使用：
-
-```Bash
+```bash
+y 你好
 y word or sentence
+g google 翻译可能需要proxy
 ```
 
-- 也可以直接执行脚本进行交互式翻译(解决 要翻译的内容带有引号或命令行特殊符号的问题)：
-
-`y`
-
-- 也可以直接使用：
-
-```Bash
-curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py | python3 - word or sentence
-```
-
-## 启用OpenapiYoudao
+## Enable OpenapiYoudao
 
 去`https://ai.youdao.com/`创建应用
 
@@ -46,11 +29,9 @@ curl -s https://raw.githubusercontent.com/YeXiaoRain/DICT/python3/DICT.py | pyth
 
 如果没有配置则不会调用`OpenapiYoudao`
 
-## 其它翻译项目(如nodejs分支)
+## Deps
 
-|repo|source|comment|modified|
-|---|---|---|---|
-|[command-line-tool/dictionary](https://github.com/command-line-tool/dictionary)|youdaoapi|不支持句子|youdaodict|
-|[syaning/dict-en-zh](https://github.com/syaning/dict-en-zh)|youdao网页/shanbayapi|shanbay源比较垃圾|-|
-|[Toybreak/cliDict](https://github.com/Toybreak/cliDict)|bing|没有中->英 不支持句子|bingdict|
-|[justinleoye/tuzki-dict](https://github.com/justinleoye/tuzki-dict)||chrome插件|-|
+- ~~<http://fanyi.youdao.com>~~
+- yodao.com
+- <https://openapi.youdao.com/api>
+- googletrans
